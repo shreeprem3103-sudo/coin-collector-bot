@@ -7,7 +7,7 @@ on:
 
 jobs:
   run-bot:
-    runs-on: macos-13 # MacOS runners have hardware acceleration for Android emulators
+    runs-on: macos-14 # MacOS runners have hardware acceleration for Android emulators
     
     steps:
     - name: Checkout Repository Code
