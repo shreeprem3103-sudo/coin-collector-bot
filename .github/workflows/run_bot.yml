@@ -27,10 +27,19 @@ jobs:
     - name: Launch Android Cloud Emulator & Run Bot
       uses: reactivecircus/android-emulator-runner@v2
       with:
-        api-level: 30 # Android 11.0 (Highly optimized for ARM64 runners)
-        target: google_apis
-        arch: arm64-v8a # Matches the M1/M2 hardware architecture
+        api-level: 30
+        target: default  # Using the default barebones Android image instead of heavy Google APIs
+        arch: arm64-v8a
+        force-avd-creation: true
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: true
         script: |
+          # Wake up Appium control server
           appium --log appium.log &
           sleep 5 
+          
+          # Force check that the device is online before handing over to python
+          adb wait-for-device
+          
+          # Execute the core bot script
           python bot31.py
