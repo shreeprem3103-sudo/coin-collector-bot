@@ -1,0 +1,41 @@
+name: Mobile App Automation Bot
+
+on:
+  workflow_dispatch: # Allows you to run it manually by clicking a button
+  schedule:
+    - cron: '0 * * * *' # Automatically runs once every hour, 24/7
+
+jobs:
+  run-bot:
+    runs-on: macos-13 # MacOS runners have hardware acceleration for Android emulators
+    
+    steps:
+    - name: Checkout Repository Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python Environment
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install Automation Tools
+      run: |
+        pip install Appium-Python-Client selenium
+        npm install -g appium
+        appium driver install uiautomator2
+
+    - name: Launch Android Cloud Emulator & Run Bot
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 28 # Android 9.0 (Stable, lightweight, and bypasses modern security walls)
+        target: default
+        arch: x86_64
+        script: |
+          # Start the Appium control server in the background
+          appium --log appium.log &
+          
+          # Wait 5 seconds for Appium to wake up
+          sleep 5 
+          
+          # Run your custom python automation script
+          python bot31.py
